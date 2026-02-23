@@ -85,7 +85,7 @@
 
       //Essa função primeiro destroí todas as tabelas já criadas, deixando tudo limpo, logo após, cria as tabelas
       function lista_produto() {
-        const notificacao = document.getElementById("notificacao");
+        let notificacao = document.getElementById("notificacao");
         let aviso = document.getElementById("aviso");
 
         //Percorre a NodeList e aplica element.remove() em cada uma
@@ -185,6 +185,7 @@
 
       //Função que esvazia todos os elementos do array com array.length e lista de tabela
       function limpar_lista() {
+        let notificacao = document.getElementById("notificacao");
         let aviso = document.getElementById("aviso");
         let todas_tabelas = document.querySelectorAll("table");
 
@@ -197,6 +198,7 @@
         somador_subtotal = 0;
 
         aviso.textContent = "Todos os produtos foram removidos!";
+        notificacao.textContent = " ";
         limpar_input();
       }
 
