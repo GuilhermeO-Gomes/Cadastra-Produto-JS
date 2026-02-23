@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>Lista de Compras</title>
+  <meta charset="UTF-8">
+  <style>
+  
+	.borda_tabela {
+		border: 2px solid black;
+		border-collapse: collapse;
+		padding: 5px;
+		margin-bottom: 10px;
+	}	
+	
+	.invisivel {
+		visibility: hidden;
+	}
+  </style>
+ </head>
+ 
+ <body>
+	<h1>Cadastro de Produtos(Array de Objetos)</h1>
+	<label>Produto: <input id="produto_input" placeholder="Ex: Mouse"></label>
+	<label>Preço(R$): <input id="preco_input" placeholder="Ex: 99.90"></label>
+	<label>Quantidade: <input id="qtd_input" placeholder="Ex: 2"></label>
+	
+	<button onclick="adicionar_produto()">Adicionar Produto</button>
+	<button onclick="alterar_toggle_lista_produto()">Listar Produto</button>
+	<button onclick="alterar_toggle_resumo()">Resumo</button>
+	<button onclick="limpar_lista()">Limpar tudo</button>
+	<hr>
+	
+	<h2>Remover por Índice</h2>
+	<input id="remove_indice" placeholder="Ex: 0">
+	<button onclick="remove_produto()">Remover</button>
+	<h2 id="texto_cadastro"></h2>
+	<p id="aviso"></p>
+	<h1 id="notificacao_2"></h1>
+	<p id="p_produto"></p>
+	<p id="p_itens_qtd"></p>
+	<p id="p_total"></p>
+	<h1 id="notificacao"></h1>
+	
+	
+	
+	<script>
+	//Tabela para cada Produto
+	//Cada tabela terá 2 tr´s, 4 th´s, e respectivamente, 4 td´s
+	
+	//Um loop de array para criar uma table e 2 tr´s para cada objeto, e dentro dele o loop de chaves que percorrerá o objeto e criará um th e td para cada chave e valor
+	let lista = [];
+	let lista_itens_qtd = [];
+	let lista_subtotal = [];
+	let produto = document.getElementById("produto_input");
+	let preco = document.getElementById("preco_input");
+	let qtd = document.getElementById("qtd_input");
+	let visibilidade = true;
+	let visibilidade_2 = true;
+	let somador = 0;
+	let somador_subtotal = 0;
+	
+	
+	
+	function adicionar_produto() {
+	let aviso = document.getElementById("aviso");
+	let valor_preco = parseFloat(preco.value);
+	let valor_qtd = parseInt(qtd.value);
+	let item = {
+	Índice: lista.length,
+	Produto : produto.value,
+	Preço : valor_preco,
+	QTD: valor_qtd,
+	Subtotal: valor_qtd * valor_preco
+	}
+	
+	lista_subtotal.push(item.Subtotal)
+	lista_itens_qtd.push(valor_qtd)
+	lista.push(item)
+	
+	aviso.textContent = `Produto adicionado. Total cadastrado: ${lista.length}`
+	console.log(lista)
+	limpar_input()
+	}
+	
+	function alterar_toggle_lista_produto() {
+		visibilidade = !visibilidade;
+		lista_produto();
+	}
+	
+	function lista_produto(){
+	const notificacao = document.getElementById("notificacao");
+	let aviso = document.getElementById("aviso");
+	
+	let todas_tabelas = document.querySelectorAll("table")
+	todas_tabelas.forEach(tabela => tabela.remove())
+	
+	lista.forEach((elemento) => {
+	let tabela = document.createElement("table");
+	let tr1 = document.createElement("tr");
+	let tr2 = document.createElement("tr");
+	let prop;
+	let valor;
+	let th;
+	let td;
+	
+	Object.keys(elemento).forEach((chave) => {
+	//Eu guardo a chave e o valor dentro de variáveis let, para ela mudar de valor a cada iteração
+	prop = chave;
+	valor = elemento[chave];
+	//O erro começa aqui
+	th = document.createElement("th")
+	td = document.createElement("td")
+	th.textContent = prop
+	td.textContent = valor
+	td.classList.add("borda_tabela");
+	th.classList.add("borda_tabela");
+	tr1.appendChild(th);
+	tr2.appendChild(td);
+	})
+	
+	tabela.appendChild(tr1);
+	tabela.appendChild(tr2);
+	document.body.appendChild(tabela);
+	
+	notificacao.textContent = "Produtos Cadastrados: "
+	aviso.textContent = "";
+	
+	tabela.classList.add("borda_tabela");
+	if (visibilidade){
+		notificacao.classList.add("invisivel")
+		tabela.classList.add("invisivel")
+	} else {
+		notificacao.classList.remove("invisivel")
+		tabela.classList.remove("invisivel")
+	}
+
+	})
+	limpar_input();
+	}
+	
+	function alterar_toggle_resumo() {
+	visibilidade_2 = !visibilidade_2
+	resumo_dados()
+	}
+	
+	function resumo_dados() {
+	 somador = 0
+	 somador_subtotal = 0
+	 let notificacao_2 = document.getElementById("notificacao_2"); 
+	 const p_produto = document.getElementById("p_produto")
+	 const p_itens = document.getElementById("p_itens_qtd")
+	 const p_total = document.getElementById("p_total") 
+	
+	lista_itens_qtd.forEach(elemento => {
+	somador += elemento
+	})
+	console.log(somador)
+	
+	lista_subtotal.forEach(elemento => {
+	somador_subtotal += elemento
+	})
+	console.log(somador_subtotal);
+
+	notificacao_2.textContent = "Resumo"
+	p_produto.textContent = `Total de produtos (linhas): ${lista.length}` 
+	p_itens.textContent = `Total de itens (Somando as quantidades): ${somador}`
+	p_total.textContent = `Valor total do estoque: R$ ${somador_subtotal}`
+	
+	if(visibilidade_2){
+		notificacao_2.classList.add("invisivel")
+		p_produto.classList.add("invisivel")
+		p_itens.classList.add("invisivel")
+		p_total.classList.add("invisivel")
+	} else {
+		notificacao_2.classList.remove("invisivel")
+		p_produto.classList.remove("invisivel")
+		p_itens.classList.remove("invisivel")
+		p_total.classList.remove("invisivel")
+	}
+	limpar_input();
+	}
+	
+	function limpar_lista() {
+	let aviso = document.getElementById("aviso");
+	let todas_tabelas = document.querySelectorAll("table")
+	
+	todas_tabelas.forEach(tabela => tabela.remove())
+	lista.length = 0;
+	lista_itens_qtd.length = 0
+	lista_subtotal.length = 0
+	lista_produto.length = 0
+	somador = 0;
+	somador_subtotal = 0;
+	
+	aviso.textContent = "Todos os produtos foram removidos!";
+	limpar_input();
+	}
+	
+	function remove_produto() {
+	const input_remove = document.getElementById("remove_indice")
+	const input_remove_int = parseInt(input_remove.value);
+	lista.splice(`${input_remove_int}`,`${input_remove_int}`);
+	console.log(lista)
+	aviso.textContent = "";
+	
+	}
+	
+	
+	function limpar_input(){
+	const input_remove = document.getElementById("remove_indice")
+	input_remove.value = "";
+	produto.value = "";
+	preco.value = "";
+	qtd.value = "";
+	}
+	</script>
+ </body>
+</html>
